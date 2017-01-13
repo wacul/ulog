@@ -43,3 +43,17 @@ func main() {
 	ctx = ulog.With(ctx, ulog.Connector(demoConnector("connector2")))
 	f(ctx)
 }
+
+/* output sample
+
+2017/01/14 00:49:57 info	this is function f
+2017/01/14 00:49:57 info	called with ctx		key1=1	key2=2
+2017/01/14 00:49:57 info	called with ctx2		key1=1	key2=2	key3=3
+connector(fallback) info this is function f null
+connector(fallback) info called with ctx [{"Key":"key1","Value":1},{"Key":"key2","Value":2}]
+connector(fallback) info called with ctx2 [{"Key":"key1","Value":1},{"Key":"key2","Value":2},{"Key":"key3","Value":3}]
+connector2 info this is function f null
+connector2 info called with ctx [{"Key":"key1","Value":1},{"Key":"key2","Value":2}]
+connector2 info called with ctx2 [{"Key":"key1","Value":1},{"Key":"key2","Value":2},{"Key":"key3","Value":3}]
+
+*/
