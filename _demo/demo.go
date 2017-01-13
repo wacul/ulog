@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/tutuming/ulog"
 )
 
@@ -13,20 +12,7 @@ type demoConnector string
 
 func (c demoConnector) Handle(e ulog.ConnectorEntry) {
 	b, _ := json.Marshal(e.Fields)
-	fmt.Println(c, e.Message, string(b))
-}
-
-func main() {
-	ctx := context.Background()
-	f(ctx)
-
-	ulog.SetFallbackConnector(demoConnector("connector(fallback)"))
-	f(ctx)
-
-	ctx = ulog.With(ctx, ulog.Connector(demoConnector("connector2")))
-	f(ctx)
-
-	spew.Dump(ctx)
+	fmt.Println(c, e.Level.String(), e.Message, string(b))
 }
 
 func f(ctx context.Context) {
@@ -39,4 +25,18 @@ func f(ctx context.Context) {
 	ctx2 := ulog.With(ctx, ulog.Field("key3", 3))
 	ulog.Info(ctx, "abc")
 	ulog.Info(ctx2, "abc")
+}
+
+func main() {
+	// default logger will be called
+	ctx := context.Background()
+	f(ctx)
+
+	// custom logger will be called
+	ulog.SetFallbackConnector(demoConnector("connector(fallback)"))
+	f(ctx)
+
+	// custom logger will be called under this context
+	ctx = ulog.With(ctx, ulog.Connector(demoConnector("connector2")))
+	f(ctx)
 }
