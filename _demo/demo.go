@@ -16,15 +16,18 @@ func (c demoConnector) Handle(e ulog.ConnectorEntry) {
 }
 
 func f(ctx context.Context) {
-	ulog.Info(nil, "a")
-	ulog.Info(ctx, "b")
-	ulog.Warn(ctx, "c")
+	ulog.Info(ctx, "this is function f")
+
+	// add key-value
 	ctx = ulog.With(ctx,
 		ulog.Field("key1", 1),
 		ulog.Field("key2", 2))
+
+	// and more
 	ctx2 := ulog.With(ctx, ulog.Field("key3", 3))
-	ulog.Info(ctx, "abc")
-	ulog.Info(ctx2, "abc")
+
+	ulog.Info(ctx, "called with ctx")   // with key1, key2
+	ulog.Info(ctx2, "called with ctx2") // with key1, key2, key3
 }
 
 func main() {
