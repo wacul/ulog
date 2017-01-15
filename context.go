@@ -4,18 +4,21 @@ import "context"
 
 type (
 	fieldsKeyType    struct{}
-	connectorKeyType struct{}
+	adapterKeyType   struct{}
+	callDepthKeyType struct{}
 	fieldKey         string
 
-	optionFunc func(ctx context.Context) context.Context
+	wrapFunc func(ctx context.Context) context.Context
 )
 
 var (
 	fieldsKey    fieldsKeyType
-	connectorKey connectorKeyType
+	adapterKey   adapterKeyType
+	callDepthKey callDepthKeyType
 )
 
-func With(ctx context.Context, opts ...optionFunc) context.Context {
+// With is a utility function to set context values.
+func With(ctx context.Context, opts ...wrapFunc) context.Context {
 	for _, opt := range opts {
 		if opt == nil {
 			continue
@@ -26,22 +29,36 @@ func With(ctx context.Context, opts ...optionFunc) context.Context {
 	return ctx
 }
 
-func withField(ctx context.Context, key string, value interface{}) context.Context {
+// WithField creates a context that holds key-value pair to log.
+func WithField(ctx context.Context, key string, value interface{}) context.Context {
 	fk := fieldKey(key)
 	ctx = context.WithValue(ctx, fk, value)
 	fks, _ := ctx.Value(fieldsKey).([]fieldKey)
+	for _, fk := range fks {
+		if string(fk) == key {
+			// fields already contains key
+			return ctx
+		}
+	}
 	ctx = context.WithValue(ctx, fieldsKey, append(fks, fk))
 	return ctx
 }
 
-func fields(ctx context.Context) []ConnectorField {
+// Field is a utility function passed to With method, works same as WithField
+func Field(key string, value interface{}) wrapFunc {
+	return func(ctx context.Context) context.Context {
+		return WithField(ctx, key, value)
+	}
+}
+
+func fieldsFromContext(ctx context.Context) []LogField {
 	keys, _ := ctx.Value(fieldsKey).([]fieldKey)
 	if len(keys) == 0 {
 		return nil
 	}
-	fs := make([]ConnectorField, len(keys))
+	fs := make([]LogField, len(keys))
 	for i := range keys {
-		fs[i] = ConnectorField{
+		fs[i] = LogField{
 			Key:   string(keys[i]),
 			Value: ctx.Value(keys[i]),
 		}
@@ -49,23 +66,36 @@ func fields(ctx context.Context) []ConnectorField {
 	return fs
 }
 
-func withConnector(ctx context.Context, lc LoggerConnector) context.Context {
-	return context.WithValue(ctx, connectorKey, lc)
+// WithAdapter returns a new context that holds LoggerAdapter that is used to logging.
+func WithAdapter(ctx context.Context, lc LoggerAdapter) context.Context {
+	return context.WithValue(ctx, adapterKey, lc)
 }
 
-func connector(ctx context.Context) LoggerConnector {
-	lc, _ := ctx.Value(connectorKey).(LoggerConnector)
-	return lc
-}
-
-func Field(key string, value interface{}) optionFunc {
+// Adapter is a utility function passed to With method, works same as WithAdapter
+func Adapter(lc LoggerAdapter) wrapFunc {
 	return func(ctx context.Context) context.Context {
-		return withField(ctx, key, value)
+		return WithAdapter(ctx, lc)
 	}
 }
 
-func Connector(lc LoggerConnector) optionFunc {
+func adapterFromContext(ctx context.Context) LoggerAdapter {
+	lc, _ := ctx.Value(adapterKey).(LoggerAdapter)
+	return lc
+}
+
+func callDepthFromContext(ctx context.Context) int {
+	cd, _ := ctx.Value(callDepthKey).(int)
+	return cd
+}
+
+// WithAddingCallDepth returns a new context that has incremented call depth to log. Used with wrapped or utilized logger functions.
+func WithAddingCallDepth(ctx context.Context, depth int) context.Context {
+	return context.WithValue(ctx, callDepthKey, callDepthFromContext(ctx)+depth)
+}
+
+// AddingCallDepth is a utility function passed to With method, works same as WithAddingCallDepth
+func AddingCallDepth(depth int) wrapFunc {
 	return func(ctx context.Context) context.Context {
-		return withConnector(ctx, lc)
+		return WithAddingCallDepth(ctx, depth)
 	}
 }

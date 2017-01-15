@@ -6,12 +6,12 @@ import (
 	stdlog "log"
 )
 
-type defaultConnector struct{}
+type stdlogAdapter struct{}
 
-func (c *defaultConnector) Handle(e ConnectorEntry) {
+func (c *stdlogAdapter) Handle(e LogEntry) {
 	var buf bytes.Buffer
-	for _, f := range e.Fields {
+	for _, f := range e.Fields() {
 		buf.Write([]byte(fmt.Sprintf("\t%s=%v", f.Key, f.Value)))
 	}
-	stdlog.Printf("%s\t%s\t%s", e.Level, e.Message, buf.String())
+	stdlog.Output(1+e.CallDepth, fmt.Sprintf("%s\t%s\t%s", e.Level, e.Message, buf.String()))
 }
