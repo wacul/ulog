@@ -1,9 +1,10 @@
 package ulog
 
 import (
-	"context"
 	"fmt"
 	"strings"
+
+	"golang.org/x/net/context"
 )
 
 const defaultCallDepth = 4

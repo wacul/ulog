@@ -1,6 +1,6 @@
 package ulog
 
-import "context"
+import "golang.org/x/net/context"
 
 type (
 	fieldsKeyType    struct{}

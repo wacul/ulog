@@ -2,12 +2,13 @@ package ulog
 
 import (
 	"bufio"
-	"context"
 	"os"
 	"reflect"
 	"runtime"
 	"strings"
 	"testing"
+
+	"golang.org/x/net/context"
 )
 
 type testAdapter struct {
