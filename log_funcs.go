@@ -8,64 +8,53 @@ import (
 
 const defaultCallDepth = 4
 
-// Interface is interface for logger
-type Interface interface {
-	Error(args ...interface{})
-	Errorf(format string, args ...interface{})
-	Warn(args ...interface{})
-	Warnf(format string, args ...interface{})
-	Info(args ...interface{})
-	Infof(format string, args ...interface{})
-	Debug(args ...interface{})
-	Debugf(format string, args ...interface{})
-}
-
-type loggerContext struct {
+// LoggerContext is context bounded logger
+type LoggerContext struct {
 	context.Context
 }
 
 // Logger returns the logger object contains context
-func Logger(ctx context.Context) Interface {
-	return &loggerContext{ctx}
+func Logger(ctx context.Context) *LoggerContext {
+	return &LoggerContext{ctx}
 }
 
 // Error level log
-func (ctx *loggerContext) Error(args ...interface{}) {
+func (ctx *LoggerContext) Error(args ...interface{}) {
 	logLevel(ctx, ErrorLevel, args...)
 }
 
 // Errorf level log with format
-func (ctx *loggerContext) Errorf(format string, args ...interface{}) {
+func (ctx *LoggerContext) Errorf(format string, args ...interface{}) {
 	logLevelf(ctx, ErrorLevel, format, args...)
 }
 
 // Warn level log
-func (ctx *loggerContext) Warn(args ...interface{}) {
+func (ctx *LoggerContext) Warn(args ...interface{}) {
 	logLevel(ctx, WarnLevel, args...)
 }
 
 // Warnf level log with format
-func (ctx *loggerContext) Warnf(format string, args ...interface{}) {
+func (ctx *LoggerContext) Warnf(format string, args ...interface{}) {
 	logLevelf(ctx, WarnLevel, format, args...)
 }
 
 // Info level log
-func (ctx *loggerContext) Info(args ...interface{}) {
+func (ctx *LoggerContext) Info(args ...interface{}) {
 	logLevel(ctx, InfoLevel, args...)
 }
 
 // Infof level log with format
-func (ctx *loggerContext) Infof(format string, args ...interface{}) {
+func (ctx *LoggerContext) Infof(format string, args ...interface{}) {
 	logLevelf(ctx, InfoLevel, format, args...)
 }
 
 // Debug level log
-func (ctx *loggerContext) Debug(args ...interface{}) {
+func (ctx *LoggerContext) Debug(args ...interface{}) {
 	logLevel(ctx, DebugLevel, args...)
 }
 
 // Debugf level log with format
-func (ctx *loggerContext) Debugf(format string, args ...interface{}) {
+func (ctx *LoggerContext) Debugf(format string, args ...interface{}) {
 	logLevelf(ctx, DebugLevel, format, args...)
 }
 
