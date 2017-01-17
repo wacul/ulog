@@ -5,6 +5,9 @@ import (
 	"github.com/tutuming/ulog"
 )
 
+// assert type
+var _ ulog.Adapter = &Log15Adapter{}
+
 //Log15Adapter is ulog adapter for Log15
 type Log15Adapter struct {
 	Logger _log15.Logger
@@ -18,7 +21,7 @@ func New(logger _log15.Logger) *Log15Adapter {
 }
 
 // Handle handles ulog entry
-func (c *Log15Adapter) Handle(e ulog.LogEntry) {
+func (c *Log15Adapter) Handle(e ulog.Entry) {
 	var l _log15.Logger = c.Logger
 	for _, f := range e.Fields() {
 		l = l.New(f.Key, f.Value)

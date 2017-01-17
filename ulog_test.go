@@ -12,13 +12,13 @@ import (
 )
 
 type testAdapter struct {
-	lastEntry      *LogEntry
+	lastEntry      Entry
 	lastCallerFile string
 	lastCallerLine int
 }
 
-func (c *testAdapter) Handle(e LogEntry) {
-	c.lastEntry = &e
+func (c *testAdapter) Handle(e Entry) {
+	c.lastEntry = e
 	_, file, line, ok := runtime.Caller(c.lastEntry.CallDepth)
 	if !ok {
 		panic("could not get caller")
@@ -30,53 +30,53 @@ func (c *testAdapter) Handle(e LogEntry) {
 func TestEntryLevel(t *testing.T) {
 	var c testAdapter
 	ctx := context.Background()
-	ctx = WithAdapter(ctx, &c)
+	logger := Logger(ctx).WithAdapter(&c)
 
 	testSets := []struct {
-		levelFunc  func(ctx context.Context, args ...interface{})
-		levelfFunc func(ctx context.Context, format string, args ...interface{})
+		levelFunc  func(args ...interface{})
+		levelfFunc func(format string, args ...interface{})
 
 		wantLevel Level
 	}{{
-		levelFunc:  Debug,
-		levelfFunc: Debugf,
+		levelFunc:  logger.Debug,
+		levelfFunc: logger.Debugf,
 		wantLevel:  DebugLevel,
 	}, {
-		levelFunc:  Info,
-		levelfFunc: Infof,
+		levelFunc:  logger.Info,
+		levelfFunc: logger.Infof,
 		wantLevel:  InfoLevel,
 	}, {
-		levelFunc:  Warn,
-		levelfFunc: Warnf,
+		levelFunc:  logger.Warn,
+		levelfFunc: logger.Warnf,
 		wantLevel:  WarnLevel,
 	}, {
-		levelFunc:  Error,
-		levelfFunc: Errorf,
+		levelFunc:  logger.Error,
+		levelfFunc: logger.Errorf,
 		wantLevel:  ErrorLevel,
 	}}
 
 	const testMessage = "test message"
 	for _, ts := range testSets {
-		ts.levelFunc(ctx, "test", "message")
+		ts.levelFunc("test", "message")
 		if c.lastEntry.Level != ts.wantLevel {
-			t.Errorf("invalid level given want %s actual %s", ts.wantLevel, c.lastEntry.Level)
+			t.Errorf("invalid level given. want %s actual %s", ts.wantLevel, c.lastEntry.Level)
 		}
 		if c.lastEntry.Message != testMessage {
-			t.Errorf("invalid message want %s actual %s", testMessage, c.lastEntry.Message)
+			t.Errorf("invalid message. want %s actual %s", testMessage, c.lastEntry.Message)
 		}
-		ts.levelfFunc(ctx, "test %s", "message")
+		ts.levelfFunc("test %s", "message")
 		if c.lastEntry.Level != ts.wantLevel {
-			t.Errorf("invalid level given want %s actual %s", ts.wantLevel, c.lastEntry.Level)
+			t.Errorf("invalid level given. want %s actual %s", ts.wantLevel, c.lastEntry.Level)
 		}
 		if c.lastEntry.Message != testMessage {
-			t.Errorf("invalid message want %s actual %s", testMessage, c.lastEntry.Message)
+			t.Errorf("invalid message. want %s actual %s", testMessage, c.lastEntry.Message)
 		}
 	}
 }
 
 func infoRecursive(ctx context.Context, depth int, message string) {
 	if depth == 1 {
-		Info(ctx, message)
+		Logger(ctx).Info(message)
 		return
 	}
 	infoRecursive(ctx, depth-1, message)
@@ -85,7 +85,7 @@ func infoRecursive(ctx context.Context, depth int, message string) {
 func TestCallDepth(t *testing.T) {
 	var c testAdapter
 	ctx := context.Background()
-	ctx = WithAdapter(ctx, &c)
+	logger := Logger(ctx).WithAdapter(&c)
 
 	checkDepthAndMarker := func(t *testing.T, wantDepth int, marker string) {
 		if wantDepth != c.lastEntry.CallDepth {
@@ -110,52 +110,51 @@ func TestCallDepth(t *testing.T) {
 		}
 	}
 
-	Info(ctx, "mark normal depth")
+	logger.Info("mark normal depth")
 	checkDepthAndMarker(t, defaultCallDepth, "mark normal depth")
 
-	infoRecursive(WithAddingCallDepth(ctx, 1), 1, "mark depth 1")
+	i := logger.WithCallDepth(1).Info
+	i("mark closure depth")
+	checkDepthAndMarker(t, defaultCallDepth+1, "mark closure depth")
+
+	infoRecursive(logger.WithCallDepth(1), 1, "mark depth 1")
 	checkDepthAndMarker(t, defaultCallDepth+1, "mark depth 1")
 
-	infoRecursive(WithAddingCallDepth(ctx, 2), 2, "mark depth 2")
+	infoRecursive(logger.WithCallDepth(2), 2, "mark depth 2")
 	checkDepthAndMarker(t, defaultCallDepth+2, "mark depth 2")
 
-	infoRecursive(With(ctx, AddingCallDepth(5), AddingCallDepth(7)), 12, "mark depth 5+7")
+	infoRecursive(logger.WithCallDepth(5).WithCallDepth(7), 12, "mark depth 5+7")
 	checkDepthAndMarker(t, defaultCallDepth+12, "mark depth 5+7")
 }
 
 func TestFields(t *testing.T) {
 	var c testAdapter
 	ctx := context.Background()
-	ctx = WithAdapter(ctx, &c)
+	logger := Logger(ctx).WithAdapter(&c)
 
 	testSet := []struct {
-		setup func(context.Context) context.Context
-		want  []LogField
+		setup func(l *LoggerContext) *LoggerContext
+		want  []Field
 	}{{
-		setup: func(ctx context.Context) context.Context {
-			return WithField(ctx, "key1", 123)
+		setup: func(l *LoggerContext) *LoggerContext {
+			return l.WithField("key1", 123)
 		},
-		want: []LogField{{"key1", 123}},
+		want: []Field{{"key1", 123}},
 	}, {
-		setup: func(ctx context.Context) context.Context {
-			ctx = WithField(ctx, "key1", 123)
-			ctx = WithField(ctx, "key2", 456)
-			return ctx
+		setup: func(l *LoggerContext) *LoggerContext {
+			return l.WithField("key1", 123).WithField("key2", 456)
 		},
-		want: []LogField{{"key1", 123}, {"key2", 456}},
+		want: []Field{{"key1", 123}, {"key2", 456}},
 	}, {
-		setup: func(ctx context.Context) context.Context {
-			ctx = WithField(ctx, "key1", 123)
-			ctx = WithField(ctx, "key2", 456)
-			ctx = WithField(ctx, "key1", 789)
-			return ctx
+		setup: func(l *LoggerContext) *LoggerContext {
+			return l.WithField("key1", 123).WithField("key2", 456).WithField("key1", 789)
 		},
-		want: []LogField{{"key1", 789}, {"key2", 456}},
+		want: []Field{{"key1", 789}, {"key2", 456}},
 	}}
 
 	for _, ts := range testSet {
-		ctx := ts.setup(ctx)
-		Info(ctx, "message")
+		l := ts.setup(logger)
+		l.Info("message")
 		if actual := c.lastEntry.Fields(); !reflect.DeepEqual(actual, ts.want) {
 			t.Errorf("invalid fields want %v, actual %v", ts.want, actual)
 		}

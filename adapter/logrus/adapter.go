@@ -5,6 +5,9 @@ import (
 	"github.com/tutuming/ulog"
 )
 
+// assert type
+var _ ulog.Adapter = &LogrusAdapter{}
+
 //LogrusAdapter is ulog adapter for logrus
 type LogrusAdapter struct {
 	Logger _logrus.FieldLogger
@@ -18,7 +21,7 @@ func New(logger _logrus.FieldLogger) *LogrusAdapter {
 }
 
 // Handle handles ulog entry
-func (c *LogrusAdapter) Handle(e ulog.LogEntry) {
+func (c *LogrusAdapter) Handle(e ulog.Entry) {
 	var l _logrus.FieldLogger = c.Logger
 	for _, f := range e.Fields() {
 		l = l.WithField(f.Key, f.Value)

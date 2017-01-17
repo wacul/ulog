@@ -5,6 +5,9 @@ import (
 	"github.com/tutuming/ulog"
 )
 
+// assert type
+var _ ulog.Adapter = &ApexAdapter{}
+
 //ApexAdapter is ulog adapter for apex
 type ApexAdapter struct {
 	Logger _apex.Interface
@@ -18,7 +21,7 @@ func New(logger _apex.Interface) *ApexAdapter {
 }
 
 // Handle handles ulog entry
-func (c *ApexAdapter) Handle(e ulog.LogEntry) {
+func (c *ApexAdapter) Handle(e ulog.Entry) {
 	var l _apex.Interface = c.Logger
 	for _, f := range e.Fields() {
 		l = l.WithField(f.Key, f.Value)

@@ -8,7 +8,7 @@ import (
 
 type stdlogAdapter struct{}
 
-func (a *stdlogAdapter) Handle(e LogEntry) {
+func (a *stdlogAdapter) Handle(e Entry) {
 	var buf bytes.Buffer
 	for _, f := range e.Fields() {
 		buf.Write([]byte(fmt.Sprintf("\t%s=%v", f.Key, f.Value)))

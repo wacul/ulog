@@ -4,45 +4,37 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"log"
+	stdlog "log"
 
 	"github.com/tutuming/ulog"
 )
 
 type demoAdapter string
 
-func (c demoAdapter) Handle(e ulog.LogEntry) {
+func (c demoAdapter) Handle(e ulog.Entry) {
 	b, _ := json.Marshal(e.Fields())
 	fmt.Println(c, e.Level.String(), e.Message, string(b))
 }
 
 func wrapLog(ctx context.Context, msg string) {
-	ulog.Info(ulog.WithAddingCallDepth(ctx, 1), "wrapped : "+msg)
+	ulog.Logger(ctx).WithCallDepth(1).Infof("wrapped : %s", msg)
 }
 
 func f(ctx context.Context) {
-	ulog.Info(ctx, "this is function f")
+	ulog.Logger(ctx).Info("this is function f")
 
-	// add key-value
-	ctx = ulog.WithField(ctx, "key1", 1)
+	// log with  key-value
+	ulog.Logger(ctx).WithField("key1", 1).Warnf("warning! %s", "message")
 
-	// and multiple field
-	ctx2 := ulog.With(ctx,
-		ulog.Field("key2", 2),
-		ulog.Field("key3", 3))
-
-	ulog.Info(ctx, "called with ctx")   // with key1, key2
-	ulog.Info(ctx2, "called with ctx2") // with key1, key2, key3
+	// Logger implement context.Context and holds key-values
+	ctx = ulog.Logger(ctx).WithField("key1", 1).WithField("key2", 2)
 
 	wrapLog(ctx, "show this line?")
-
-	// get bounded logger
-	logger := ulog.Logger(ctx2)
-	logger.Info("bounded logger")
 }
 
 func main() {
-	log.SetFlags(log.Llongfile)
+	stdlog.SetFlags(stdlog.Llongfile)
+
 	// default logger will be called
 	ctx := context.Background()
 	f(ctx)
@@ -52,6 +44,6 @@ func main() {
 	f(ctx)
 
 	// custom logger will be called under this context
-	ctx = ulog.With(ctx, ulog.Adapter(demoAdapter("adapter2")))
+	ctx = ulog.Logger(ctx).WithAdapter(demoAdapter("adapter2"))
 	f(ctx)
 }

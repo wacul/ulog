@@ -5,6 +5,9 @@ import (
 	"github.com/tutuming/ulog"
 )
 
+// assert type
+var _ ulog.Adapter = &GlogAdapter{}
+
 // GlogAdapter is ulog adapter for glog
 type GlogAdapter struct{}
 
@@ -14,7 +17,7 @@ func New() *GlogAdapter {
 }
 
 // Handle handles ulog entry
-func (c *GlogAdapter) Handle(e ulog.LogEntry) {
+func (c *GlogAdapter) Handle(e ulog.Entry) {
 	depth := e.CallDepth - 1
 	msg := e.Message
 	switch e.Level {
