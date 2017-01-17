@@ -4,11 +4,12 @@ package ulog
 type Level uint8
 
 // Logging levels
+// numeric order (Debug < Info < Warn < Error) is guaranteed
 const (
-	ErrorLevel Level = iota
-	WarnLevel
+	DebugLevel Level = iota
 	InfoLevel
-	DebugLevel
+	WarnLevel
+	ErrorLevel
 )
 
 func (l Level) String() string {

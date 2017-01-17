@@ -6,9 +6,19 @@ import (
 	stdlog "log"
 )
 
-type stdlogAdapter struct{}
+// type assersion
+var _ Adapter = &StdLogAdapter{}
 
-func (a *stdlogAdapter) Handle(e Entry) {
+// StdLogAdapter is default ulog.Adapter
+type StdLogAdapter struct {
+	Level Level
+}
+
+// Handle handles ulog.Entry
+func (a *StdLogAdapter) Handle(e Entry) {
+	if a.Level > e.Level {
+		return
+	}
 	var buf bytes.Buffer
 	for _, f := range e.Fields() {
 		buf.Write([]byte(fmt.Sprintf("\t%s=%v", f.Key, f.Value)))

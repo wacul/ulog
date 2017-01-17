@@ -133,20 +133,20 @@ func TestFields(t *testing.T) {
 	logger := Logger(ctx).WithAdapter(&c)
 
 	testSet := []struct {
-		setup func(l *LoggerContext) *LoggerContext
+		setup func(l LoggerContext) LoggerContext
 		want  []Field
 	}{{
-		setup: func(l *LoggerContext) *LoggerContext {
+		setup: func(l LoggerContext) LoggerContext {
 			return l.WithField("key1", 123)
 		},
 		want: []Field{{"key1", 123}},
 	}, {
-		setup: func(l *LoggerContext) *LoggerContext {
+		setup: func(l LoggerContext) LoggerContext {
 			return l.WithField("key1", 123).WithField("key2", 456)
 		},
 		want: []Field{{"key1", 123}, {"key2", 456}},
 	}, {
-		setup: func(l *LoggerContext) *LoggerContext {
+		setup: func(l LoggerContext) LoggerContext {
 			return l.WithField("key1", 123).WithField("key2", 456).WithField("key1", 789)
 		},
 		want: []Field{{"key1", 789}, {"key2", 456}},

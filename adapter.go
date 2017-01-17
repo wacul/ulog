@@ -7,7 +7,7 @@ type Adapter interface {
 	Handle(Entry)
 }
 
-var defaultAdapter Adapter = &stdlogAdapter{}
+var defaultAdapter Adapter = &StdLogAdapter{}
 
 func currentAdapter(ctx context.Context) Adapter {
 	if ctx == nil {
@@ -20,7 +20,7 @@ func currentAdapter(ctx context.Context) Adapter {
 	return lc
 }
 
-// SetDefaultAdapter sets the LoggerAdapter c for default adapter, that will be used when the adapter is not set or context is nil.
+// SetDefaultAdapter sets the LoggerAdapter c for default adapter which will be used when the adapter is not set in context or context is nil.
 func SetDefaultAdapter(c Adapter) {
 	if c == nil {
 		panic("passed adapter is nil")
@@ -28,7 +28,7 @@ func SetDefaultAdapter(c Adapter) {
 	defaultAdapter = c
 }
 
-// LogField is key-value pair to log
+// Field is key-value pair to log
 type Field struct {
 	Key   string
 	Value interface{}

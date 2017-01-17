@@ -21,10 +21,11 @@ func wrapLog(ctx context.Context, msg string) {
 }
 
 func f(ctx context.Context) {
-	ulog.Logger(ctx).Info("this is function f")
+	logger := ulog.Logger(ctx)
+	logger.Info("this is function f")
 
 	// log with  key-value
-	ulog.Logger(ctx).WithField("key1", 1).Warnf("warning! %s", "message")
+	logger.WithField("key1", 1).Warnf("warning! %s", "message")
 
 	// Logger implement context.Context and holds key-values
 	ctx = ulog.Logger(ctx).WithField("key1", 1).WithField("key2", 2)
