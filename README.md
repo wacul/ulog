@@ -1,6 +1,6 @@
 # ulog - structured and context oriented logging
 
-[![Build Status](https://semaphoreci.com/api/v1/wacul/ulog/branches/master/badge.svg)](https://semaphoreci.com/wacul/ulog) [![GoDoc](https://godoc.org/github.com/wacul/ulog?status.svg)](https://godoc.org/github.com/wacul/ulog)
+[![Build Status](https://semaphoreci.com/api/v1/tutuming/ulog/branches/master/badge.svg)](https://semaphoreci.com/tutuming/ulog) [![GoDoc](https://godoc.org/github.com/wacul/ulog?status.svg)](https://godoc.org/github.com/wacul/ulog)
 
 
 Package ulog provides a simple way to handle structured and context oriented logging.
