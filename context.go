@@ -56,6 +56,9 @@ func adapterFromContext(ctx context.Context) Adapter {
 }
 
 func callDepthFromContext(ctx context.Context) int {
+	if ctx == nil {
+		return 0
+	}
 	cd, _ := ctx.Value(callDepthKey).(int)
 	return cd
 }

@@ -19,7 +19,7 @@ type testAdapter struct {
 
 func (c *testAdapter) Handle(e Entry) {
 	c.lastEntry = e
-	_, file, line, ok := runtime.Caller(c.lastEntry.CallDepth)
+	_, file, line, ok := runtime.Caller(c.lastEntry.CallDepth())
 	if !ok {
 		panic("could not get caller")
 	}
@@ -88,8 +88,8 @@ func TestCallDepth(t *testing.T) {
 	logger := Logger(ctx).WithAdapter(&c)
 
 	checkDepthAndMarker := func(t *testing.T, wantDepth int, marker string) {
-		if wantDepth != c.lastEntry.CallDepth {
-			t.Errorf("invalid callDepth want %d, actual %d", wantDepth, c.lastEntry.CallDepth)
+		if wantDepth != c.lastEntry.CallDepth() {
+			t.Errorf("invalid callDepth want %d, actual %d", wantDepth, c.lastEntry.CallDepth())
 		}
 		f, err := os.Open(c.lastCallerFile)
 		if err != nil {

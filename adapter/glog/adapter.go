@@ -5,20 +5,9 @@ import (
 	"github.com/tutuming/ulog"
 )
 
-// assert type
-var _ ulog.Adapter = &GlogAdapter{}
-
-// GlogAdapter is ulog adapter for glog
-type GlogAdapter struct{}
-
-// New GlogAdapter
-func New() *GlogAdapter {
-	return &GlogAdapter{}
-}
-
-// Handle handles ulog entry
-func (c *GlogAdapter) Handle(e ulog.Entry) {
-	depth := e.CallDepth - 1
+// Adapter for glog
+var Adapter = ulog.AdapterFunc(func(e ulog.Entry) {
+	depth := e.CallDepth() - 1
 	msg := e.Message
 	switch e.Level {
 	case ulog.ErrorLevel:
@@ -28,4 +17,4 @@ func (c *GlogAdapter) Handle(e ulog.Entry) {
 	case ulog.InfoLevel, ulog.DebugLevel: // glog doesn't have debug level
 		_glog.InfoDepth(depth, msg)
 	}
-}
+})

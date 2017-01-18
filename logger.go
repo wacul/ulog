@@ -119,10 +119,9 @@ func logLevel(ctx context.Context, lv Level, args ...interface{}) {
 
 func logLevelMessage(ctx context.Context, lv Level, msg string) {
 	entry := Entry{
-		Context:   ctx,
-		Level:     lv,
-		Message:   msg,
-		CallDepth: defaultCallDepth + callDepthFromContext(ctx),
+		Context: withAddingCallDepth(ctx, defaultCallDepth),
+		Level:   lv,
+		Message: msg,
 	}
 	currentAdapter(ctx).Handle(entry)
 }
