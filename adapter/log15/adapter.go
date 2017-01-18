@@ -2,7 +2,7 @@ package log15
 
 import (
 	_log15 "github.com/inconshreveable/log15"
-	"github.com/tutuming/ulog"
+	"github.com/wacul/ulog"
 )
 
 // assert type

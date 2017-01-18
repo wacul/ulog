@@ -2,7 +2,7 @@ package logrus
 
 import (
 	_logrus "github.com/Sirupsen/logrus"
-	"github.com/tutuming/ulog"
+	"github.com/wacul/ulog"
 )
 
 // assert type

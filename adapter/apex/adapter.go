@@ -2,7 +2,7 @@ package apex
 
 import (
 	_apex "github.com/apex/log"
-	"github.com/tutuming/ulog"
+	"github.com/wacul/ulog"
 )
 
 // assert type

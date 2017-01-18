@@ -2,7 +2,7 @@ package glog
 
 import (
 	_glog "github.com/golang/glog"
-	"github.com/tutuming/ulog"
+	"github.com/wacul/ulog"
 )
 
 // Adapter for glog

@@ -1,6 +1,6 @@
 package tee
 
-import "github.com/tutuming/ulog"
+import "github.com/wacul/ulog"
 
 // Tee split log to multiple adapters
 func Tee(adapters ...ulog.Adapter) ulog.Adapter {

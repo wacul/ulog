@@ -4,7 +4,7 @@ import (
 	"context"
 	stdlog "log"
 
-	"github.com/tutuming/ulog"
+	"github.com/wacul/ulog"
 )
 
 func doSomething(ctx context.Context) {
