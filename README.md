@@ -1,6 +1,7 @@
 # ulog - structured and context oriented logging
 
-[![Build Status](https://semaphoreci.com/api/v1/tutuming/ulog/branches/master/badge.svg)](https://semaphoreci.com/tutuming/ulog)
+[![Build Status](https://semaphoreci.com/api/v1/tutuming/ulog/branches/master/badge.svg)](https://semaphoreci.com/tutuming/ulog) [![GoDoc](https://godoc.org/github.com/tutuming/ulog?status.svg)](https://godoc.org/github.com/tutuming/ulog)
+
 
 Package ulog provides a simple way to handle structured and context oriented logging.
 
@@ -50,7 +51,9 @@ demo.go:15:  warn warning! message          module=app1 key1=1
 
 ## Adapters
 
-ulog has no output handler itself. Instead, ulog provides adapter implementations for some popular loggers.
+ulog has no output handler itself. As default, all logs are output via go's standard library log.
+
+Instead, ulog provides adapter implementations for popular loggers.
 (see the [adapter](./adapter) directory)
 
 * logrus
@@ -61,3 +64,16 @@ ulog has no output handler itself. Instead, ulog provides adapter implementation
     * discards all logs
 * tee
     * splits logs to multiple adapters
+
+You can implement a custom adapter implementing simple `ulog.Adapter` interface.
+
+There're two ways to set an adapter.
+
+```go
+// set a global adapter
+// used when context has no adapter
+ulog.SetDefaultAdapter(adapter)
+
+// set a adapter used with child context
+ctx = ulog.Logger(ctx).WithAdapter(adapter)
+```
