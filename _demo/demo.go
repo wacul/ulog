@@ -9,10 +9,12 @@ import (
 
 func doSomething(ctx context.Context) {
 	logger := ulog.Logger(ctx)
-	logger.Info("this is function f")
+	logger.Info("Start doSomething")
 
 	// log with  key-value
 	logger.WithField("key1", 1).Warnf("warning! %s", "message")
+
+	logger.Info("End doSomething")
 }
 
 func main() {

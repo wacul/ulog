@@ -19,10 +19,12 @@ import (
 
 func doSomething(ctx context.Context) {
 	logger := ulog.Logger(ctx)
-	logger.Info("this is function f")
+	logger.Info("Start doSomething")
 
 	// log with  key-value
 	logger.WithField("key1", 1).Warnf("warning! %s", "message")
+
+	logger.Info("End doSomething")
 }
 
 func main() {
@@ -42,10 +44,12 @@ func main() {
 **Outoput**
 
 ```
-demo.go:12:  info this is function f       
+demo.go:12:  info Start doSomething        
 demo.go:15:  warn warning! message          key1=1
-demo.go:12:  info this is function f        module=app1
+demo.go:17:  info End doSomething          
+demo.go:12:  info Start doSomething         module=app1
 demo.go:15:  warn warning! message          module=app1 key1=1
+demo.go:17:  info End doSomething           module=app1
 ```
 
 
