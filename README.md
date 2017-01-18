@@ -1,8 +1,8 @@
-# ulog - context oriented logging
+# ulog - structured and context oriented logging
 
 [![Build Status](https://semaphoreci.com/api/v1/tutuming/ulog/branches/master/badge.svg)](https://semaphoreci.com/tutuming/ulog)
 
-Package ulog provides a simple way to handle structured context oriented logging.
+Package ulog provides a simple way to handle structured and context oriented logging.
 
 ## Examples
 
