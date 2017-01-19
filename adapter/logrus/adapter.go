@@ -22,7 +22,7 @@ func New(logger _logrus.FieldLogger) *LogrusAdapter {
 
 // Handle handles ulog entry
 func (c *LogrusAdapter) Handle(e ulog.Entry) {
-	var l _logrus.FieldLogger = c.Logger
+	l := c.Logger
 	for _, f := range e.Fields() {
 		l = l.WithField(f.Key, f.Value)
 	}
