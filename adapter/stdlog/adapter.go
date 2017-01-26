@@ -1,21 +1,23 @@
-package ulog
+package stdlog
 
 import (
 	"bytes"
 	"fmt"
-	stdlog "log"
+	"log"
+
+	"github.com/wacul/ulog"
 )
 
 // type assersion
-var _ Adapter = &StdLogAdapter{}
+var _ ulog.Adapter = &Adapter{}
 
-// StdLogAdapter is default ulog.Adapter
-type StdLogAdapter struct {
-	Level Level
+// Adapter is ulog adapter for go's standard log
+type Adapter struct {
+	Level ulog.Level
 }
 
 // Handle handles ulog.Entry
-func (a *StdLogAdapter) Handle(e Entry) {
+func (a *Adapter) Handle(e ulog.Entry) {
 	if a.Level > e.Level {
 		return
 	}
@@ -33,5 +35,5 @@ func (a *StdLogAdapter) Handle(e Entry) {
 	for _, f := range e.Fields() {
 		buf.Write([]byte(fmt.Sprintf("\t%s=%v", f.Key, f.Value)))
 	}
-	stdlog.Output(1+e.CallDepth(), b.String())
+	log.Output(1+e.CallDepth(), b.String())
 }
