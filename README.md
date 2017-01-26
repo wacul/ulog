@@ -45,7 +45,7 @@ This looks pretty good! but there're some problem
 * Your code is strongly coupled with some logger library.
     * One project uses glog but the other new project may use logrus
 
-## Use `contet.Context` with ulog
+## Use `context.Context` with ulog
 
 ulog provides a way to carry a context using Go's `context` package (for 1.6 or older version `golang.org/x/net/context`).
 
