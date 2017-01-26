@@ -17,7 +17,8 @@ func (f AdapterFunc) Handle(e Entry) {
 	f(e)
 }
 
-var defaultAdapter Adapter = &StdLogAdapter{}
+// discards all logs by default
+var defaultAdapter Adapter = AdapterFunc(func(Entry) {})
 
 // currentAdapter returns an adapter set in current context. if Adapter is not set
 // returns a default adapter (set with SetDefaultAdapter)

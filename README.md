@@ -3,7 +3,8 @@
 [![Build Status](https://semaphoreci.com/api/v1/tutuming/ulog/branches/master/badge.svg)](https://semaphoreci.com/tutuming/ulog) [![GoDoc](https://godoc.org/github.com/wacul/ulog?status.svg)](https://godoc.org/github.com/wacul/ulog)
 
 
-Package ulog provides a simple way to handle structured and context oriented logging.
+Package ulog provides a simple way to handle structured and context oriented logging and decouples package from specific log implementation.
+
 
 ## Pain in Logging
 
@@ -90,11 +91,12 @@ doSomething(ctx)
 
 ## Adapters
 
-ulog has no output handler itself. As default, all logs are output via go's standard library log.
+ulog has no output handler itself. By default, all logs are discarded.
 
-Instead, ulog provides adapter implementations for popular loggers.
+To output logs, ulog provides adapter implementations for popular loggers.
 (see the [adapter](./adapter) directory)
 
+* stdlog (go's standard library log)
 * logrus
 * log15
 * glog
@@ -127,6 +129,7 @@ import (
 	stdlog "log"
 
 	"github.com/wacul/ulog"
+	stdlog_adapter "github.com/wacul/ulog/adapter/stdlog"
 )
 
 func doSomething(ctx context.Context) {
@@ -140,14 +143,20 @@ func doSomething(ctx context.Context) {
 }
 
 func main() {
-	// ulog uses go's standard log as default
+	// ulog discards all logs by default
 	stdlog.SetFlags(stdlog.Lshortfile)
 
 	ctx := context.Background()
+	ctx = ulog.Logger(ctx).WithAdapter(&stdlog_adapter.Adapter{})
 	doSomething(ctx)
 
 	// ulog.Logger returns type ulog.LoggerContext that also implements context.Context
-	ctx = ulog.Logger(ctx).WithField("module", "app1")
+	ctx = ulog.Logger(ctx).
+		// set field for children
+		WithField("module", "app1").
+		// and set log adapter for children
+		WithAdapter(&stdlog_adapter.Adapter{Level: ulog.WarnLevel})
+
 	// so you can pass as context to other function
 	doSomething(ctx)
 }
@@ -156,10 +165,8 @@ func main() {
 **Outoput**
 
 ```
-demo.go:12:  info Start doSomething        
-demo.go:15:  warn warning! message          key1=1
-demo.go:17:  info End doSomething          
-demo.go:12:  info Start doSomething         module=app1
-demo.go:15:  warn warning! message          module=app1 key1=1
-demo.go:17:  info End doSomething           module=app1
+demo.go:13:  info Start doSomething        
+demo.go:16:  warn warning! message          key1=1
+demo.go:18:  info End doSomething          
+demo.go:16:  warn warning! message          module=app1 key1=1
 ```
