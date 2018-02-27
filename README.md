@@ -1,6 +1,6 @@
 # ulog - Structured and context oriented logging interface for Go
 
-[![Build Status](https://semaphoreci.com/api/v1/tutuming/ulog/branches/master/badge.svg)](https://semaphoreci.com/tutuming/ulog) [![GoDoc](https://godoc.org/github.com/wacul/ulog?status.svg)](https://godoc.org/github.com/wacul/ulog)
+[![Build Status](https://travis-ci.org/wacul/ulog.svg?branch=master)](https://travis-ci.org/wacul/ulog) [![GoDoc](https://godoc.org/github.com/wacul/ulog?status.svg)](https://godoc.org/github.com/wacul/ulog)
 
 
 Package ulog provides a simple way to handle structured and context oriented logging and decouples package from specific log implementation.
