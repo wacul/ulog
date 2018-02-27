@@ -75,7 +75,7 @@ doSomething(ctx)
 ```go
 // from batch process
 import (
-    "github.com/Sirupsen/logrus"
+    "github.com/sirupsen/logrus"
     logrusadapter "github.com/wacul/adapter/logrus"
 )
 //...

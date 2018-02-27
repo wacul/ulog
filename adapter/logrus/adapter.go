@@ -1,7 +1,7 @@
 package logrus
 
 import (
-	_logrus "github.com/Sirupsen/logrus"
+	_logrus "github.com/sirupsen/logrus"
 	"github.com/wacul/ulog"
 )
 
