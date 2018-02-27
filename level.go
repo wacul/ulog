@@ -50,7 +50,7 @@ func ParseLevel(s string) (Level, error) {
 }
 
 // MustLevel parses string to Level.
-// Panics when unknwon level given
+// Panics when unknown level given
 func MustLevel(s string) Level {
 	l, err := ParseLevel(s)
 	if err != nil {
