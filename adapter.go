@@ -56,7 +56,7 @@ type Entry struct {
 
 // CallDepth retruns a numver of caller depth
 func (e *Entry) CallDepth() int {
-	return callDepthFromContext(e)
+	return CallDepthFromContext(e)
 }
 
 // Fields returns log fields binded with context
