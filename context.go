@@ -55,7 +55,8 @@ func adapterFromContext(ctx context.Context) Adapter {
 	return lc
 }
 
-func callDepthFromContext(ctx context.Context) int {
+// CallerDepthFromContext return callerDepth int value, this value is used by finding caller position, usually dones't have to remember it.
+func CallDepthFromContext(ctx context.Context) int {
 	if ctx == nil {
 		return 0
 	}
