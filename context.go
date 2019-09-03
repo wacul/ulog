@@ -66,5 +66,5 @@ func CallDepthFromContext(ctx context.Context) int {
 
 // withAddingCallDepth returns a new context that has incremented call depth to log. Used with wrapped or utilized logger functions.
 func withAddingCallDepth(ctx context.Context, depth int) context.Context {
-	return context.WithValue(ctx, callDepthKey, callDepthFromContext(ctx)+depth)
+	return context.WithValue(ctx, callDepthKey, CallDepthFromContext(ctx)+depth)
 }
